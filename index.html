@@ -23,7 +23,7 @@
 </head>
 <body>
 
-<h1>MIC Attendance</h1>
+<h1>MIC attendance</h1>
 <div id="datetime">Loading...</div>
 <div id="location">Fetching location...</div>
 
@@ -39,16 +39,17 @@
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
 
-        // Manually map specific coordinates to location names
-        let locationName = "Unknown Location";
-        
-        if (latitude >= 4.9000 && latitude <= 4.9100 && longitude >= 114.8900 && longitude <= 114.9000) {
-            locationName = "MIC Jerudong";
-        } else if (latitude >= 4.9000 && latitude <= 4.9100 && longitude >= 114.9200 && longitude <= 114.9300) {
-            locationName = "Gadong";
-        }
-
-        document.getElementById('location').textContent = `Location: ${locationName}`;
+        // Fetch location name using Nominatim API
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+            .then(response => response.json())
+            .then(data => {
+                const locationName = data.display_name || "Location name not available";
+                document.getElementById('location').textContent = `Location: ${locationName}`;
+            })
+            .catch(error => {
+                console.error('Error fetching location name:', error);
+                document.getElementById('location').textContent = "Unable to fetch location name.";
+            });
     }
 
     function showError(error) {
