@@ -23,7 +23,7 @@
             color: #4CAF50;
             margin-bottom: 20px;
         }
-        #datetime, #location {
+        #datetime, #location, #deviceId {
             font-size: 20px;
             margin-top: 10px;
             background-color: #fff;
@@ -44,8 +44,22 @@
 <h1>MIC Attendance</h1>
 <div id="datetime">Loading date and time...</div>
 <div id="location">Fetching location...</div>
+<div id="deviceId">Device ID: Loading...</div>
 
 <script>
+    function generateDeviceId() {
+        return 'device-' + Math.random().toString(36).substr(2, 9);
+    }
+
+    function getDeviceId() {
+        let deviceId = localStorage.getItem('deviceId');
+        if (!deviceId) {
+            deviceId = generateDeviceId();
+            localStorage.setItem('deviceId', deviceId);
+        }
+        return deviceId;
+    }
+
     function updateDateTime() {
         const now = new Date();
         const date = now.toLocaleDateString(); // Get current date
@@ -98,9 +112,10 @@
     // Update the date and time every second
     setInterval(updateDateTime, 1000);
 
-    // Initial call to display date and time and fetch location immediately on load
+    // Initial call to display date and time, fetch location, and display device ID
     updateDateTime();
     getLocation();
+    document.getElementById('deviceId').textContent = `Device ID: ${getDeviceId()}`;
 </script>
 
 </body>
