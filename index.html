@@ -23,7 +23,7 @@
             color: #4CAF50;
             margin-bottom: 20px;
         }
-        #datetime, #location, #deviceId {
+        #datetime, #location, #userNameDisplay {
             font-size: 20px;
             margin-top: 10px;
             background-color: #fff;
@@ -37,6 +37,21 @@
         #location {
             margin-top: 20px;
         }
+        #userNameInput {
+            margin-top: 20px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -44,22 +59,14 @@
 <h1>MIC Attendance</h1>
 <div id="datetime">Loading date and time...</div>
 <div id="location">Fetching location...</div>
-<div id="deviceId">Device ID: Loading...</div>
+<div id="userNameDisplay">User: Loading...</div>
+<div id="userNameInput" style="display: none;">
+    <label for="userName">Enter your name:</label><br>
+    <input type="text" id="userName" name="userName" placeholder="Your name">
+    <button onclick="saveUserName()">Submit</button>
+</div>
 
 <script>
-    function generateDeviceId() {
-        return 'device-' + Math.random().toString(36).substr(2, 9);
-    }
-
-    function getDeviceId() {
-        let deviceId = localStorage.getItem('deviceId');
-        if (!deviceId) {
-            deviceId = generateDeviceId();
-            localStorage.setItem('deviceId', deviceId);
-        }
-        return deviceId;
-    }
-
     function updateDateTime() {
         const now = new Date();
         const date = now.toLocaleDateString(); // Get current date
@@ -109,13 +116,32 @@
         }
     }
 
+    function showUserName() {
+        const userName = localStorage.getItem('userName');
+        if (userName) {
+            document.getElementById('userNameDisplay').textContent = `User: ${userName}`;
+            document.getElementById('userNameInput').style.display = 'none';
+        } else {
+            document.getElementById('userNameDisplay').textContent = 'User: Not provided';
+            document.getElementById('userNameInput').style.display = 'block';
+        }
+    }
+
+    function saveUserName() {
+        const userName = document.getElementById('userName').value;
+        if (userName) {
+            localStorage.setItem('userName', userName);
+            showUserName();
+        }
+    }
+
     // Update the date and time every second
     setInterval(updateDateTime, 1000);
 
-    // Initial call to display date and time, fetch location, and display device ID
+    // Initial call to display date and time, fetch location, and show user name
     updateDateTime();
     getLocation();
-    document.getElementById('deviceId').textContent = `Device ID: ${getDeviceId()}`;
+    showUserName(); // Automatically detect the user based on previous input
 </script>
 
 </body>
