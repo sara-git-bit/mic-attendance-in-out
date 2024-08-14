@@ -23,7 +23,7 @@
             color: #4CAF50;
             margin-bottom: 20px;
         }
-        #datetime, #location, #userNameDisplay {
+        #datetime, #location, #ownerDisplay {
             font-size: 20px;
             margin-top: 10px;
             background-color: #fff;
@@ -33,11 +33,9 @@
             width: 80%;
             max-width: 400px;
             word-wrap: break-word;
+            display: none; /* Initially hidden */
         }
-        #location {
-            margin-top: 20px;
-        }
-        #userNameInput {
+        #ownerInput {
             margin-top: 20px;
         }
         button {
@@ -57,14 +55,14 @@
 <body>
 
 <h1>MIC Attendance</h1>
-<div id="datetime">Loading date and time...</div>
-<div id="location">Fetching location...</div>
-<div id="userNameDisplay">User: Loading...</div>
-<div id="userNameInput" style="display: none;">
-    <label for="userName">Enter your name:</label><br>
-    <input type="text" id="userName" name="userName" placeholder="Your name">
-    <button onclick="saveUserName()">Submit</button>
+<div id="ownerInput">
+    <label for="ownerName">Enter the device owner name:</label><br>
+    <input type="text" id="ownerName" name="ownerName" placeholder="Owner's name">
+    <button onclick="submitOwner()">Submit</button>
 </div>
+<div id="ownerDisplay">Owner: </div>
+<div id="datetime">Date: | Time: </div>
+<div id="location">Location: </div>
 
 <script>
     function updateDateTime() {
@@ -116,32 +114,21 @@
         }
     }
 
-    function showUserName() {
-        const userName = localStorage.getItem('userName');
-        if (userName) {
-            document.getElementById('userNameDisplay').textContent = `User: ${userName}`;
-            document.getElementById('userNameInput').style.display = 'none';
-        } else {
-            document.getElementById('userNameDisplay').textContent = 'User: Not provided';
-            document.getElementById('userNameInput').style.display = 'block';
-        }
-    }
-
-    function saveUserName() {
-        const userName = document.getElementById('userName').value;
-        if (userName) {
-            localStorage.setItem('userName', userName);
-            showUserName();
+    function submitOwner() {
+        const ownerName = document.getElementById('ownerName').value;
+        if (ownerName) {
+            document.getElementById('ownerDisplay').textContent = `Owner: ${ownerName}`;
+            document.getElementById('ownerInput').style.display = 'none'; // Hide the input form
+            document.getElementById('ownerDisplay').style.display = 'block';
+            document.getElementById('datetime').style.display = 'block';
+            document.getElementById('location').style.display = 'block';
+            updateDateTime(); // Display date and time
+            getLocation(); // Get location
         }
     }
 
     // Update the date and time every second
     setInterval(updateDateTime, 1000);
-
-    // Initial call to display date and time, fetch location, and show user name
-    updateDateTime();
-    getLocation();
-    showUserName(); // Automatically detect the user based on previous input
 </script>
 
 </body>
